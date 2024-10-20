@@ -1,17 +1,18 @@
-# Natours: Is an API to practice BE development
+# Natours: API to practice BE development
 ## Collection: [API](https://documenter.getpostman.com/view/2000788/2sAXqpA4o2)
 ## Technologies  
   - [x] NodeJS
   - [x] ExpressJS
   - [x] Mongoose
-  - [x] Payment
-  - [x] File uploads ( Single - Multi )
+  - [x] Stripe
+  - [x] Node mailer
 
 ## Features
   - [x] Authentication
   - [x] Authorization
   - [x] User management
-  - [x] Payments
+  - [x] Payment
+  - [x] File uploads ( Single - Multi )
 
 ## APIs
   - [x] Authentication
@@ -19,3 +20,5 @@
   - [x] Users
   - [x] Tours
   - [x] Reviews
+
+### Creation date: _21/10/2024_
