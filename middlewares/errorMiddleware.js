@@ -72,7 +72,6 @@ const sendErrorProd = (err, req, res) => {
 };
 
 const globalErrorMiddleware = (err, req, res, next) => {
-  // console.log('stack', err.stack);
   err.statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
   err.status = err.status || 'error';
 

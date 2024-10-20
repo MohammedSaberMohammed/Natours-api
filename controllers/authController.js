@@ -45,8 +45,8 @@ const signup = catchAsync(async (req, res, next) => {
 
   const url = `${req.protocol}://${req.get('host')}/me`;
 
-  const mail = await new Email(user, url).sendWelcome();
-  console.log('mail', mail);
+  await new Email(user, url).sendWelcome();
+
   createSendToken(user, StatusCodes.CREATED, res);
 });
 

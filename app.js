@@ -1,6 +1,7 @@
 //# sourceMappingURL=app.js.map
 const path = require('path');
 const express = require('express');
+const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -81,6 +82,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// ? compress all responses
+app.use(compression());
 
 // ? 3) ROUTES
 app.use('/', viewsRouter);
