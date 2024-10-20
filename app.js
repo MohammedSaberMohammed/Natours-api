@@ -17,6 +17,7 @@ const { userRouter } = require('./routes/userRoutes');
 const { reviewRouter } = require('./routes/reviewRoutes');
 const { viewsRouter } = require('./routes/viewsRoutes');
 const { authRouter } = require('./routes/authRoutes');
+const { bookingRouter } = require('./routes/bookingRoutes');
 const { authenticateUser } = require('./middlewares/authMiddleware');
 
 const app = express();
@@ -75,7 +76,7 @@ app.use((req, res, next) => {
 
   res.set(
     'Content-Security-Policy',
-    "default-src 'self' https://*.mapbox.com; base-uri 'self'; block-all-mixed-content; font-src 'self' https:; frame-ancestors 'self'; img-src 'self' blob: data:; object-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com https://api.mapbox.com 'self' blob:; style-src 'self' https: 'unsafe-inline'; upgrade-insecure-requests;",
+    "default-src 'self' https://*.mapbox.com https://js.stripe.com/v3/; base-uri 'self'; block-all-mixed-content; font-src 'self' https:; frame-ancestors 'self'; img-src 'self' blob: data:; object-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com https://api.mapbox.com https://js.stripe.com/v3/ 'self' blob:; style-src 'self' https: 'unsafe-inline'; upgrade-insecure-requests;",
   );
 
   next();
@@ -87,6 +88,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', authenticateUser, userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', authenticateUser, bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(

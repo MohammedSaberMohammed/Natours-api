@@ -2,6 +2,7 @@ const { StatusCodes } = require('http-status-codes');
 const { catchAsync } = require('../utils/catchAsync');
 const Tour = require('../models/tourModel');
 const { AppError } = require('../utils/appError');
+const { Booking } = require('../models/bookingModel');
 
 const getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
@@ -42,8 +43,23 @@ const getAccount = (req, res) => {
   });
 };
 
+const getMyTours = catchAsync(async (req, res, next) => {
+  // ? 1) Find all bookings
+  const bookings = await Booking.find({ user: req.user.id });
+
+  // ? 2) Find tours with the returned IDs
+  const tourIDs = bookings.map((booking) => booking.tour);
+  const tours = await Tour.find({ _id: { $in: tourIDs } });
+
+  res.status(StatusCodes.OK).render('overview', {
+    title: 'My Tours',
+    tours,
+  });
+});
+
 module.exports = {
   getTour,
+  getMyTours,
   getAccount,
   getOverview,
   getLoginForm,
