@@ -1,5 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { AppError } = require('../utils/appError');
+const { isApiRoute } = require('../utils/global');
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
@@ -30,27 +31,44 @@ const handleValidationErrorDB = (err) => {
   return new AppError(errors, StatusCodes.BAD_REQUEST);
 };
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
+const sendErrorDev = (err, req, res) => {
+  if (isApiRoute(req)) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong',
+    msg: err.message,
   });
 };
 
-const sendErrorProd = (err, res) => {
+const sendErrorProd = (err, req, res) => {
+  if (isApiRoute(req)) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
+  }
+
+  // ? 1) Operational, trusted error: send message to client
   if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-  } else {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      status: 'error',
-      message: 'something went wrong',
+    return res.status(err.statusCode).render('error', {
+      title: 'Something went wrong',
+      msg: err.message,
     });
   }
+
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong',
+    msg: 'Please try again later',
+  });
 };
 
 const globalErrorMiddleware = (err, req, res, next) => {
@@ -59,7 +77,7 @@ const globalErrorMiddleware = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = {
       ...err,
@@ -89,7 +107,7 @@ const globalErrorMiddleware = (err, req, res, next) => {
       error = handleJWTExpiredError(error, res);
     }
 
-    sendErrorProd(error, res);
+    sendErrorProd(error, req, res);
   }
 };
 

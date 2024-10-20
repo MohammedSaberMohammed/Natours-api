@@ -3,14 +3,18 @@ const {
   getTour,
   getOverview,
   getLoginForm,
+  getAccount,
 } = require('../controllers/viewsController');
+const {
+  isLoggedIn,
+  authenticateUser,
+} = require('../middlewares/authMiddleware');
 
 const viewsRouter = express.Router();
 
-viewsRouter.get('/', getOverview);
-viewsRouter.get('/tour/:slug', getTour);
-viewsRouter.get('/login', getLoginForm);
+viewsRouter.get('/', isLoggedIn, getOverview);
+viewsRouter.get('/tour/:slug', isLoggedIn, getTour);
+viewsRouter.get('/login', isLoggedIn, getLoginForm);
+viewsRouter.get('/me', authenticateUser, getAccount);
 
-module.exports = {
-  viewsRouter,
-};
+module.exports = { viewsRouter };

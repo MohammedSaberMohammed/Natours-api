@@ -10,11 +10,15 @@ const {
   getMe,
 } = require('../controllers/userController');
 const { restrictTo } = require('../middlewares/authMiddleware');
+const {
+  uploadUserPhoto,
+  resizeUserPhoto,
+} = require('../middlewares/attachments');
 
 const userRouter = express.Router();
 
 userRouter.get('/getMe', getMe, getUser);
-userRouter.patch('/updateMe', updateMe);
+userRouter.patch('/updateMe', uploadUserPhoto, resizeUserPhoto, updateMe);
 userRouter.delete('/deleteMe', deleteMe);
 
 // ? Restrict all routes after this middleware

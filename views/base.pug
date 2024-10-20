@@ -19,6 +19,10 @@ html(lang='en')
       block content
 
     // Footer
-    include _footer
+    block footer
+      include _footer      
+      script(src='/js/alerts.js')
+      script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js')
 
-    script(src='/js/bundle.js')
+      if user
+        script(src='/js/logout.js')

@@ -36,8 +36,15 @@ const getLoginForm = (req, res) => {
   });
 };
 
+const getAccount = (req, res) => {
+  res.status(StatusCodes.OK).render('account', {
+    title: 'Your account',
+  });
+};
+
 module.exports = {
   getTour,
+  getAccount,
   getOverview,
   getLoginForm,
 };

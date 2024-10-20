@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 
 const locations = JSON.parse(document.getElementById('map').dataset.locations);
-console.log(locations);
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoibS1zYWJlcjk1IiwiYSI6ImNtMWswMGUxZzBibmwycXM4aXo1dDZvemMifQ.xdcBi1t91aAuT7x1B1HvXA';

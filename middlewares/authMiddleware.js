@@ -52,6 +52,7 @@ const authenticateUser = catchAsync(async (req, res, next) => {
   }
 
   req.user = currenUser;
+  res.locals.user = currenUser;
 
   next();
 });

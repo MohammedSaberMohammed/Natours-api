@@ -1,5 +1,3 @@
-console.log('Hello from index.js d');
-
 //# sourceMappingURL=app.js.map
 const path = require('path');
 const express = require('express');
@@ -19,10 +17,7 @@ const { userRouter } = require('./routes/userRoutes');
 const { reviewRouter } = require('./routes/reviewRoutes');
 const { viewsRouter } = require('./routes/viewsRoutes');
 const { authRouter } = require('./routes/authRoutes');
-const {
-  isLoggedIn,
-  authenticateUser,
-} = require('./middlewares/authMiddleware');
+const { authenticateUser } = require('./middlewares/authMiddleware');
 
 const app = express();
 
@@ -77,12 +72,17 @@ app.use(
 // ? Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies);
+
+  res.set(
+    'Content-Security-Policy',
+    "default-src 'self' https://*.mapbox.com; base-uri 'self'; block-all-mixed-content; font-src 'self' https:; frame-ancestors 'self'; img-src 'self' blob: data:; object-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com https://api.mapbox.com 'self' blob:; style-src 'self' https: 'unsafe-inline'; upgrade-insecure-requests;",
+  );
+
   next();
 });
 
 // ? 3) ROUTES
-app.use('/', isLoggedIn, viewsRouter);
+app.use('/', viewsRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', authenticateUser, userRouter);

@@ -16,6 +16,10 @@ const {
   restrictTo,
   authenticateUser,
 } = require('../middlewares/authMiddleware');
+const {
+  uploadTourImages,
+  resizeTourImages,
+} = require('../middlewares/attachments');
 
 const tourRouter = express.Router();
 
@@ -48,7 +52,13 @@ tourRouter
 tourRouter
   .route('/:id')
   .get(getTour)
-  .patch(authenticateUser, restrictTo('admin', 'lead-guide'), updateTour)
+  .patch(
+    authenticateUser,
+    restrictTo('admin', 'lead-guide'),
+    uploadTourImages,
+    resizeTourImages,
+    updateTour,
+  )
   .delete(authenticateUser, restrictTo('admin', 'lead-guide'), deleteTour);
 
 module.exports = { tourRouter };

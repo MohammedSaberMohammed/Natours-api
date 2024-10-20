@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/userModel');
 const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appError');
-const { sendEmail } = require('../utils/email');
+const { Email } = require('../utils/email');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -43,8 +43,21 @@ const signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
   });
 
+  const url = `${req.protocol}://${req.get('host')}/me`;
+
+  const mail = await new Email(user, url).sendWelcome();
+  console.log('mail', mail);
   createSendToken(user, StatusCodes.CREATED, res);
 });
+
+const logout = (req, res) => {
+  res.cookie('jwt', '', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(StatusCodes.OK).json({ status: 'success' });
+};
 
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -87,16 +100,10 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // ? 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${resetToken}`;
-
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you did not request this, please ignore this email!`;
-
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 min)',
-      message,
-    });
+    // Todo: This route should be a page not an api route
+    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/auth/reset-password/${resetToken}`;
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(StatusCodes.OK).json({
       status: 'success',
@@ -166,8 +173,9 @@ const updatePassword = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
-  signup,
   login,
+  logout,
+  signup,
   forgotPassword,
   resetPassword,
   updatePassword,
