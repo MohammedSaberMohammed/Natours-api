@@ -1,5 +1,5 @@
 # Natours: Is an API to practice BE development
-## Collection: (https://documenter.getpostman.com/view/2000788/2sAXqpA4o2)[API]
+## Collection: [API](https://documenter.getpostman.com/view/2000788/2sAXqpA4o2)
 ## Technologies  
   - [x] NodeJS
   - [x] ExpressJS
