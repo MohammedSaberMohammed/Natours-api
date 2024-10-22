@@ -23,6 +23,7 @@ const { authenticateUser } = require('./middlewares/authMiddleware');
 
 const app = express();
 
+app.enable('trust proxy');
 app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`);
 
