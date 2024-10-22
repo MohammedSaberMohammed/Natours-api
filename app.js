@@ -9,6 +9,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const { StatusCodes } = require('http-status-codes');
 const AppError = require('./utils/appError');
@@ -28,6 +29,10 @@ app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`);
 
 // ? 1) GLOBAL MIDDLEWARES
+// ? Implement CORS
+app.use(cors());
+app.options('*', cors());
+
 // ? Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
