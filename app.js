@@ -21,6 +21,7 @@ const { viewsRouter } = require('./routes/viewsRoutes');
 const { authRouter } = require('./routes/authRoutes');
 const { bookingRouter } = require('./routes/bookingRoutes');
 const { authenticateUser } = require('./middlewares/authMiddleware');
+const { webhookCheckout } = require('./controllers/bookingController');
 
 const app = express();
 
@@ -51,6 +52,12 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again in an hour!',
 });
 app.use('/api', limiter);
+
+app.post(
+  '/webhook-checkout',
+  express.json({ type: 'application/json' }),
+  webhookCheckout,
+);
 
 // ? Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
